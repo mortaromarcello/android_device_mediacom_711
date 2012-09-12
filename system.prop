@@ -25,11 +25,6 @@ persist.sys.strictmode.disable=1
 #Default USB Config (Do not change this)
 persist.sys.usb.config=mass_storage,adb
 
-ro.additionalmounts=/storage/sdcard1
-ro.vold.switchablepair=/storage/sdcard0,/storage/sdcard1
-persist.sys.vold.switchexternal=0
-
-
 ro.display.switch = 1
 
 #RIL config
