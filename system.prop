@@ -11,6 +11,10 @@ persist.sys.root_access=3
 ro.sf.lcd_density=120
 hwui.render_dirty_regions=false
 
+persist.sys.timezone=Europe/Rome
+persist.sys.language=it
+persist.sys.country=IT
+
 wifi.interface = wlan0
 wifi.supplicant_scan_interval = 60
 
@@ -20,6 +24,11 @@ persist.sys.strictmode.disable=1
 
 #Default USB Config (Do not change this)
 persist.sys.usb.config=mass_storage,adb
+
+ro.additionalmounts=/storage/sdcard1
+ro.vold.switchablepair=/storage/sdcard0,/storage/sdcard1
+persist.sys.vold.switchexternal=0
+
 
 ro.display.switch = 1
 
