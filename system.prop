@@ -11,6 +11,10 @@ persist.sys.root_access=3
 ro.sf.lcd_density=120
 hwui.render_dirty_regions=false
 
+persist.sys.timezone=Europe/Rome
+persist.sys.language=it
+persist.sys.country=IT
+
 wifi.interface = wlan0
 wifi.supplicant_scan_interval = 60
 
