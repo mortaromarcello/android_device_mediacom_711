@@ -15,6 +15,10 @@ persist.sys.timezone=Europe/Rome
 persist.sys.language=it
 persist.sys.country=IT
 
+ro.additionalmounts=/storage/sdcard1
+ro.vold.switchablepair=/storage/sdcard0,/storage/sdcard1
+persist.sys.vold.switchexternal=0
+
 wifi.interface = wlan0
 wifi.supplicant_scan_interval = 60
 
