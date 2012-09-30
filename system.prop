@@ -21,6 +21,7 @@ persist.sys.vold.switchexternal=0
 
 wifi.interface = wlan0
 wifi.supplicant_scan_interval = 60
+debug.egl.hw=1
 
 #Disable StrictMode
 persist.sys.strictmode.visual=0
