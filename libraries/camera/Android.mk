@@ -37,7 +37,7 @@ LOCAL_C_INCLUDES += \
 	external/jpeg \
 	external/skia/include/core \
 	frameworks/base/core/jni/android/graphics \
-	device/allwinner/a10/include \
+	$(TARGET_HARDWARE_INCLUDE) \
 	external/cedarx/CedarX/include/include_camera \
         frameworks/native/include \
 
