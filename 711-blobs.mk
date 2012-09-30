@@ -23,8 +23,7 @@ PRODUCT_COPY_FILES += \
 	device/mediacom/711/ramdisk/init.trace.rc:root/init.trace.rc \
 	device/mediacom/711/ramdisk/ueventd.rc:root/ueventd.rc \
 	device/mediacom/711/ramdisk/ueventd.sun4i.rc:root/ueventd.sun4i.rc \
-	device/mediacom/711/ramdisk/adbd:root/sbin/adbd \
-	device/mediacom/711/recovery/reboot-bootloader.sh:recovery/root/sbin/reboot-bootloader.sh
+	device/mediacom/711/ramdisk/adbd:root/sbin/adbd
 
 # EGL Stuff
 PRODUCT_COPY_FILES += \
