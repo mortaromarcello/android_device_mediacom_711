@@ -47,6 +47,9 @@ PRODUCT_COPY_FILES += \
 #	$(DEVICE_PREBUILT)/lib/hw/camera.exDroid.so:system/lib/hw/camera.exDroid.so
 #	$(DEVICE_PREBUILT)/lib/hw/gps.exDroid.so:system/lib/hw/gps.exDroid.so \
 
+# App
+	$(DEVICE_PREBUILT)/app/novo7tools.apk:system/app/novo7tools.apk
+
 # OTG/3G stuff
 PRODUCT_COPY_FILES += \
         $(DEVICE_PREBUILT)/bin/u3gmonitor:system/bin/u3gmonitor \
