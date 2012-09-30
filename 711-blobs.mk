@@ -24,6 +24,7 @@ PRODUCT_COPY_FILES += \
 	device/mediacom/711/ramdisk/ueventd.rc:root/ueventd.rc \
 	device/mediacom/711/ramdisk/ueventd.sun4i.rc:root/ueventd.sun4i.rc \
 	device/mediacom/711/ramdisk/adbd:root/sbin/adbd \
+	device/mediacom/711/recovery/reboot-bootloader.sh:recovery/root/sbin/reboot-bootloader.sh
 
 # EGL Stuff
 PRODUCT_COPY_FILES += \
@@ -39,14 +40,13 @@ PRODUCT_COPY_FILES += \
 # Camera
 PRODUCT_COPY_FILES += \
 	$(DEVICE_PREBUILT)/etc/camera.cfg:system/etc/camera.cfg \
-        $(DEVICE_PREBUILT)/etc/media_profiles.xml:system/etc/media_profiles.xml 
+    $(DEVICE_PREBUILT)/etc/media_profiles.xml:system/etc/media_profiles.xml
 
 # will be removed in future
 PRODUCT_COPY_FILES += \
-	$(DEVICE_PREBUILT)/lib/hw/gps.sun4i.so:system/lib/hw/gps.sun4i.so \
-	$(DEVICE_PREBUILT)/lib/hw/camera.exDroid.so:system/lib/hw/camera.exDroid.so \
 	$(DEVICE_PREBUILT)/lib/hw/sensors.exDroid.so:system/lib/hw/sensors.exDroid.so
-
+#	$(DEVICE_PREBUILT)/lib/hw/camera.exDroid.so:system/lib/hw/camera.exDroid.so
+#	$(DEVICE_PREBUILT)/lib/hw/gps.exDroid.so:system/lib/hw/gps.exDroid.so \
 
 # OTG/3G stuff
 PRODUCT_COPY_FILES += \
@@ -58,6 +58,7 @@ PRODUCT_COPY_FILES += \
         $(DEVICE_PREBUILT)/etc/ppp/call-pppd:system/etc/ppp/call-pppd \
         $(DEVICE_PREBUILT)/etc/ppp/ip-down:system/etc/ppp/ip-down \
         $(DEVICE_PREBUILT)/etc/ppp/ip-up:system/etc/ppp/ip-up \
+        $(DEVICE_PREBUILT)/bin/hdmi-audio:system/bin/hdmi-audio \
         $(DEVICE_PREBUILT)/bin/memsicd:system/bin/memsicd 
 
 PRODUCT_COPY_FILES += $(shell test -d $(DEVICE_PREBUILT)/etc/usb_modeswitch.d && \
@@ -96,8 +97,8 @@ PRODUCT_COPY_FILES += \
 	$(call find-copy-subdir-files,*,$(DEVICE_PREBUILT)/etc/init.d,system/etc/init.d)
 
 # New CM9 backup list system (addon.d)
-PRODUCT_COPY_FILES += \
-	${device_path}/releasetools/addon.d/70-gapps.sh:system/addon.d/70-gapps.sh \
+#PRODUCT_COPY_FILES += \
+#	${device_path}/releasetools/addon.d/70-gapps.sh:system/addon.d/70-gapps.sh \
 
 PRODUCT_BUILD_PROP_OVERRIDES := PRODUCT_NAME=GT-I9100 PRODUCT_BRAND=samsung BUILD_ID=IML74K BUILD_FINGERPRINT=samsung/GT-I9100/GT-I9100:4.0.3/IML74K/BGLP8:user/release-keys PRIVATE_BUILD_DESC="GT-I9100-user 4.0.3 IML74K BGLP8 release-keys" BUILD_NUMBER=BGLP8
 #end of 711-blobs.mk

@@ -20,7 +20,7 @@ $(call inherit-product, vendor/cm/config/common_full_tablet_wifionly.mk)
 $(call inherit-product, vendor/cm/config/gsm.mk)
 $(call inherit-product, device/mediacom/711/711-blobs.mk)
 
-TARGET_BOOTANIMATION_NAME := vertical-1200
+TARGET_BOOTANIMATION_NAME := $(TARGET_SCREEN_WIDTH)
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_NAME := cm_711

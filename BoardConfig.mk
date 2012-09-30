@@ -20,6 +20,7 @@ USE_CAMERA_STUB := true
 HAVE_HTC_AUDIO_DRIVER := true
 BOARD_USES_GENERIC_AUDIO := true
 BOARD_USES_GPS_TYPE := simulator
+BOARD_USES_HDMI := true
 
 TARGET_NO_BOOTLOADER := true
 TARGET_NO_RADIOIMAGE := true
@@ -57,15 +58,25 @@ COMMON_GLOBAL_CFLAGS += -DSURFACEFLINGER_FORCE_SCREEN_RELEASE
 TARGET_BOOTANIMATION_PRELOAD := true
 TARGET_BOOTANIMATION_TEXTURE_CACHE := true
 TARGET_BOOTANIMATION_USE_RGB565 := true
+TARGET_SCREEN_WIDTH := 800
+TARGET_SCREEN_EIGHT := 480
+
+# audio & camera & cedarx
+CEDARX_CHIP_VERSION := F23
+CEDARX_USE_SWAUDIO := N
+
+# use our own su for root
+BOARD_USES_ROOT_SU := true
 
 #Recovery Stuff
 #TARGET_RECOVERY_UI_LIB := librecovery_ui_generic
 #TARGET_RECOVERY_UPDATER_LIBS += librecovery_updater_generic
 BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/mediacom/711/recovery_keys.c
 BOARD_USE_LEGACY_TOUCHSCREEN := true
+BOARD_HAS_NO_SELECT_BUTTON := true
 TARGET_HARDWARE_INCLUDE := $(ANDROID_BUILD_TOP)/device/mediacom/711/include
-TARGET_RECOVERY_PRE_COMMAND := "echo -n boot-recovery | dd of=/dev/block/nandf count=1 conv=sync; sync;"
-TARGET_RECOVERY_INITRC := device/mediacom/711/ramdisk/recovery_init.rc
+TARGET_RECOVERY_PRE_COMMAND := "echo -n boot-recovery | busybox dd of=/dev/block/nandf count=1 conv=sync; sync"
+#TARGET_RECOVERY_INITRC := device/mediacom/711/ramdisk/recovery_init.rc
 
 # Wifi stuff
 BOARD_WIFI_VENDOR                := realtek
@@ -86,9 +97,14 @@ ENABLE_WEBGL := true
 #TARGET_KERNEL_SOURCE := $(ANDROID_BUILD_TOP)/kernel/
 #TARGET_KERNEL_CONFIG := 711i_defconfig
 #TARGET_KERNEL_MODULES_EXT := $(ANDROID_BUILD_TOP)/device/mediacom/711/prebuilt/lib/modules
-BOARD_KERNEL_CMDLINE := console=ttyS0,115200 rw init=/init
+BOARD_KERNEL_CMDLINE := console=ttyS0,115200 rw init=/init loglevel=8
 BOARD_KERNEL_BASE := 0x40000000
 BOARD_KERNEL_PAGESIZE := 2048
 
 # Beware: set only prebuilt OR source+config
 TARGET_PREBUILT_KERNEL := $(ANDROID_BUILD_TOP)/device/mediacom/711/kernel
+SW_BOARD_USES_GSENSOR_TYPE := mxc622x
+SW_BOARD_GSENSOR_DIRECT_X := true
+SW_BOARD_GSENSOR_DIRECT_Y := false
+SW_BOARD_GSENSOR_DIRECT_Z := true
+SW_BOARD_GSENSOR_XY_REVERT := true

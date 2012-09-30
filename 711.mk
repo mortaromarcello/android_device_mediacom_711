@@ -51,10 +51,16 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += librs_jni rild_sun4i power.sun4i
 
 # EGL stuff
-PRODUCT_PACKAGES += gralloc.exDroid hwcomposer.exDroid display.exDroid
+PRODUCT_PACKAGES += gralloc.sun4i hwcomposer.exDroid display.sun4i
 
 # Sensors
-PRODUCT_PACKAGES += lights.exDroid
+#PRODUCT_PACKAGES += memsicd sensors.exDroid libaccelcal
+# Camera
+PRODUCT_PACKAGES += camera.exDroid
+#
+PRODUCT_PACKAGES += lights.sun4i
+
+#PRODUCT_PACKAGES += gps.exDroid
 
 # CM apps
 PRODUCT_PACKAGES += FileManager com.android.future.usb.accessory
@@ -69,6 +75,10 @@ PRODUCT_PACKAGES += audio.a2dp.default libaudioutils libtinyalsa audio_policy.su
 PRODUCT_PACKAGES += libCedarA libCedarX libcedarv libcedarxbase libcedarxosal libswdrm libcedarxsftdemux
 PRODUCT_PACKAGES += libcedarv_adapter libve libfacedetection libaw_audio libaw_audioa libcedarv_base
 PRODUCT_PACKAGES += libstagefright_soft_cedar_h264dec librtmp
+
+# Apps
+PRODUCT_PACKAGES += FDroid GhostCommander
+
 
 # copy all others kernel modules under the "modules" directory to system/lib/modules
 PRODUCT_COPY_FILES += $(shell test -d device/mediacom/711/prebuilt/lib/modules && \
