@@ -1,0 +1,9 @@
+local.properties
+build.properties
+project.properties
+.classpath
+bin/*
+gen/*
+proguard.cfg
+proguard-project.txt
+*~
