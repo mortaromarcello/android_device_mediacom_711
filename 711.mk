@@ -51,14 +51,14 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += librs_jni rild_sun4i power.sun4i
 
 # EGL stuff
-PRODUCT_PACKAGES += gralloc.sun4i hwcomposer.exDroid display.sun4i
+PRODUCT_PACKAGES += gralloc.exDroid hwcomposer.exDroid display.exDroid
 
 # Sensors
 #PRODUCT_PACKAGES += memsicd sensors.exDroid libaccelcal
 # Camera
 PRODUCT_PACKAGES += camera.exDroid
 #
-PRODUCT_PACKAGES += lights.sun4i
+PRODUCT_PACKAGES += lights.exDroid
 
 #PRODUCT_PACKAGES += gps.exDroid
 
