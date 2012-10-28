@@ -37,4 +37,4 @@ rild.libpath=/system/lib/liballwinner-ril.so
 rild.libargs=-d /dev/ttyUSB2
 
 #ROM-Updater
-ro.romupdater.repository=https://www.dropbox.com/sh/hwzbpt4bbc3267s/QpNdHJ9Tsd
+ro.romupdater.repository=http://www.mortarommarcello.netsons.org/repository/
