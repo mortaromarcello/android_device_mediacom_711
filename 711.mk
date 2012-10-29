@@ -77,7 +77,7 @@ PRODUCT_PACKAGES += libcedarv_adapter libve libfacedetection libaw_audio libaw_a
 PRODUCT_PACKAGES += libstagefright_soft_cedar_h264dec librtmp
 
 # Apps
-PRODUCT_PACKAGES += FDroid GhostCommander ROM-Updater
+PRODUCT_PACKAGES += FDroid GhostCommander OTAUpdateCenter
 
 
 # copy all others kernel modules under the "modules" directory to system/lib/modules
