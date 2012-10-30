@@ -104,4 +104,8 @@ PRODUCT_COPY_FILES += \
 #	${device_path}/releasetools/addon.d/70-gapps.sh:system/addon.d/70-gapps.sh \
 
 PRODUCT_BUILD_PROP_OVERRIDES := PRODUCT_NAME=GT-I9100 PRODUCT_BRAND=samsung BUILD_ID=IML74K BUILD_FINGERPRINT=samsung/GT-I9100/GT-I9100:4.0.3/IML74K/BGLP8:user/release-keys PRIVATE_BUILD_DESC="GT-I9100-user 4.0.3 IML74K BGLP8 release-keys" BUILD_NUMBER=BGLP8
+
+$(shell sed -e 's/otaupdater.otaver=00000000/otaupdater.otaver=`/bin/date +%Y%m%d`/' out/target/product/711/system/build.prop)
+$(shell sed -e 's/otaupdater.otaver=00000000/otaupdater.otatime=`/bin/date +%Y%m%d-%H%M`/' out/target/product/711/system/build.prop)
+
 #end of 711-blobs.mk

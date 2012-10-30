@@ -38,8 +38,8 @@ rild.libargs=-d /dev/ttyUSB2
 
 # OTA-Updater
 otaupdater.otaid=cm_10
-otaupdater.otaver=20121029
-otaupdater.otatime=20121029-1200
+otaupdater.otaver=00000000
+otaupdater.otatime=00000000-0000
 otaupdater.sdcard.os=/mnt/extsd
 otaupdater.sdcard.recovery=/sdcard
 
