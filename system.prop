@@ -36,10 +36,3 @@ ro.display.switch=1
 rild.libpath=/system/lib/liballwinner-ril.so
 rild.libargs=-d /dev/ttyUSB2
 
-#OTA-Updater
-otaupdater.otaid=cm_10
-otaupdater.sdcard.os=/mnt/extsd
-otaupdater.sdcard.recovery=/sdcard
-otaupdater.otatime=00000000-0000
-otaupdater.otaver=00000000
-
