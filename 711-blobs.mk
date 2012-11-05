@@ -28,7 +28,6 @@ PRODUCT_COPY_FILES += \
 # EGL Stuff
 PRODUCT_COPY_FILES += \
 	$(DEVICE_PREBUILT)/lib/egl/libEGL_mali.so:system/lib/egl/libEGL_mali.so \
-	$(DEVICE_PREBUILT)/lib/egl/libGLES_android.so:system/lib/egl/libGLES_android.so \
 	$(DEVICE_PREBUILT)/lib/egl/libGLESv1_CM_mali.so:system/lib/egl/libGLESv1_CM_mali.so \
 	$(DEVICE_PREBUILT)/lib/egl/libGLESv2_mali.so:system/lib/egl/libGLESv2_mali.so \
 	$(DEVICE_PREBUILT)/lib/libMali.so:system/lib/libMali.so \
