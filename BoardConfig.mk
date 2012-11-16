@@ -65,6 +65,7 @@ TARGET_SCREEN_EIGHT := 480
 # audio & camera & cedarx
 CEDARX_CHIP_VERSION := F23
 CEDARX_USE_SWAUDIO := N
+CAMERA_USES_SURFACEFLINGER_CLIENT_STUB := true
 
 # use our own su for root
 BOARD_USES_ROOT_SU := true
