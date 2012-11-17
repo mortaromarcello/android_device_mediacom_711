@@ -75,6 +75,7 @@ PRODUCT_PACKAGES += audio.a2dp.default libaudioutils libtinyalsa audio_policy.su
 PRODUCT_PACKAGES += libCedarA libCedarX libcedarv libcedarxbase libcedarxosal libswdrm libcedarxsftdemux
 PRODUCT_PACKAGES += libcedarv_adapter libve libfacedetection libaw_audio libaw_audioa libcedarv_base
 PRODUCT_PACKAGES += libstagefright_soft_cedar_h264dec librtmp
+PRODUCT_PACKAGES += libthirdpartstream libcedarxsftstream
 
 # Apps
 PRODUCT_PACKAGES += FDroid
