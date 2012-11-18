@@ -25,7 +25,14 @@
 #include <hardware/hardware.h>
 #include <hardware/power.h>
 
+#define SCALINGMAXFREQ_PATH "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq"
 #define BOOSTPULSE_PATH "/sys/devices/system/cpu/cpufreq/interactive/boostpulse"
+
+#define MAX_BUF_SZ  10
+
+/* initialize to something safe */
+static char screen_off_max_freq[MAX_BUF_SZ] = "700000";
+static char scaling_max_freq[MAX_BUF_SZ] = "1008000";
 
 struct sun4i_power_module {
     struct power_module base;
@@ -33,6 +40,23 @@ struct sun4i_power_module {
     int boostpulse_fd;
     int boostpulse_warned;
 };
+
+int sysfs_read(const char *path, char *buf, size_t size)
+{
+    int fd, len;
+
+    fd = open(path, O_RDONLY);
+    if (fd < 0)
+        return -1;
+
+    do {
+        len = read(fd, buf, size);
+    } while (len < 0 && errno == EINTR);
+
+    close(fd);
+
+    return len;
+}
 
 static void sysfs_write(char *path, char *s)
 {
@@ -58,20 +82,20 @@ static void sysfs_write(char *path, char *s)
 static void sun4i_power_init(struct power_module *module)
 {
     /*
-     * cpufreq interactive governor: timer 20ms, min sample 60ms,
-     * hispeed 700MHz at load 50%.
+     * cpufreq interactive governor: timer 20ms, min sample 80ms,
+     * hispeed 700MHz at load 85%, enable input boost.
      */
 
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/timer_rate",
                 "20000");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/min_sample_time",
-                "60000");
+                "80000");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/hispeed_freq",
                 "700000");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load",
-                "50");
+                "85");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay",
-                "100000");
+                "20000");
 }
 
 static int boostpulse_open(struct sun4i_power_module *sun4i)
@@ -98,13 +122,33 @@ static int boostpulse_open(struct sun4i_power_module *sun4i)
 
 static void sun4i_power_set_interactive(struct power_module *module, int on)
 {
+    int len;
+
+    char buf[MAX_BUF_SZ];
+
     /*
-     * Lower maximum frequency when screen is off.  CPU 0 and 1 share a
-     * cpufreq policy.
+     * Lower maximum frequency when screen is off.
      */
 
-    sysfs_write("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq",
-                on ? "1008000" : "700000");
+    if (!on) {
+        /* read the current scaling max freq and save it before updating */
+        len = sysfs_read(SCALINGMAXFREQ_PATH, buf, sizeof(buf));
+
+        /* make sure it's not the screen off freq, if the "on"
+         * call is skipped (can happen if you press the power
+         * button repeatedly) we might have read it. We should
+         * skip it if that's the case
+         */
+        if (len != -1 && strncmp(buf, screen_off_max_freq,
+                strlen(screen_off_max_freq)) != 0)
+            memcpy(scaling_max_freq, buf, sizeof(buf));
+
+        sysfs_write(SCALINGMAXFREQ_PATH, screen_off_max_freq);
+    } else
+        sysfs_write(SCALINGMAXFREQ_PATH, scaling_max_freq);
+
+    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/input_boost",
+                on ? "1" : "0");
 }
 
 static void sun4i_power_hint(struct power_module *module, power_hint_t hint,
@@ -116,6 +160,7 @@ static void sun4i_power_hint(struct power_module *module, power_hint_t hint,
 
     switch (hint) {
     case POWER_HINT_INTERACTION:
+    case POWER_HINT_CPU_BOOST:
         if (boostpulse_open(sun4i) >= 0) {
 	    len = write(sun4i->boostpulse_fd, "1", 1);
 

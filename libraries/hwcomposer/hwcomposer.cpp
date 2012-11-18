@@ -276,7 +276,7 @@ static void hwc_computerlayerdisplayframe(hwc_composer_device_t *dev)
     curlayer->posW    = curlayer->posW_org;
     curlayer->posH    = curlayer->posH_org;
     /*
-     * This ALOGIc here is to return an error if the rectangle is not fully
+     * This logic here is to return an error if the rectangle is not fully
      * within the display, unless we have not received a valid position yet,
      * in which case we will do our best to adjust the rectangle to be within
      * the display.
@@ -1951,11 +1951,11 @@ static int hwc_set(hwc_composer_device_t *dev,
     //    dump_layer(&list->hwLayers[i]);
     //}
     EGLBoolean sucess = eglSwapBuffers((EGLDisplay)dpy, (EGLSurface)sur);
-    if (!sucess)
+    if (unlikely(!sucess))
         return HWC_EGL_ERROR;
 
     //don't continue if layer list is NULL
-    if (list == NULL)
+    if (unlikely(list == NULL))
         return 0;
 
     return hwc_set_layer(dev,list);
