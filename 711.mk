@@ -63,7 +63,7 @@ PRODUCT_PACKAGES += lights.exDroid
 #PRODUCT_PACKAGES += gps.exDroid
 
 # CM apps
-PRODUCT_PACKAGES += FileManager com.android.future.usb.accessory
+PRODUCT_PACKAGES += com.android.future.usb.accessory
 
 # EXT4 Support
 PRODUCT_PACKAGES += make_ext4fs e2fsck
