@@ -33,6 +33,7 @@
 #include "gralloc_vsync_report.h"
 #endif
 
+#include "alloc_device.h"
 #include "gralloc_priv.h"
 #include "gralloc_helper.h"
 
@@ -44,6 +45,7 @@ enum
 	PAGE_FLIP = 0x00000001,
 };
 
+
 static int fb_set_swap_interval(struct framebuffer_device_t* dev, int interval)
 {
 	if (interval < dev->minSwapInterval || interval > dev->maxSwapInterval)
@@ -52,7 +54,7 @@ static int fb_set_swap_interval(struct framebuffer_device_t* dev, int interval)
 	}
 
 	// Currently not implemented
-    return 0;
+	return 0;
 }
 
 static int fb_post(struct framebuffer_device_t* dev, buffer_handle_t buffer)
@@ -77,7 +79,7 @@ static int fb_post(struct framebuffer_device_t* dev, buffer_handle_t buffer)
 				0, 0, m->info.xres, m->info.yres, NULL);
 
 		const size_t offset = hnd->base - m->framebuffer->base;
-                int interrupt;
+		int interrupt;
 		m->info.activate = FB_ACTIVATE_VBL;
 		m->info.yoffset = offset / m->finfo.line_length;
 
@@ -86,41 +88,43 @@ static int fb_post(struct framebuffer_device_t* dev, buffer_handle_t buffer)
 #define S3CFB_SET_VSYNC_INT	_IOW('F', 206, unsigned int)
 		if (ioctl(m->framebuffer->fd, FBIOPAN_DISPLAY, &m->info) == -1) 
 		{
-			ALOGE("FBIOPAN_DISPLAY failed");
+			AERR( "FBIOPAN_DISPLAY failed for fd: %d", m->framebuffer->fd );
 			m->base.unlock(&m->base, buffer); 
 			return 0;
 		}
 
-                // enable VSYNC
-                interrupt = 1;
-                if(ioctl(m->framebuffer->fd, S3CFB_SET_VSYNC_INT, &interrupt) < 0) 
 		{
-                    ALOGE("S3CFB_SET_VSYNC_INT enable failed");
-                    return 0;
-                }
-                // wait for VSYNC
+			// enable VSYNC
+			interrupt = 1;
+			if(ioctl(m->framebuffer->fd, S3CFB_SET_VSYNC_INT, &interrupt) < 0) 
+			{
+				AERR( "S3CFB_SET_VSYNC_INT enable failed for fd: %d", m->framebuffer->fd );
+				return 0;
+			}
+			// wait for VSYNC
 #ifdef MALI_VSYNC_EVENT_REPORT_ENABLE
-		gralloc_mali_vsync_report(MALI_VSYNC_EVENT_BEGIN_WAIT);
+			gralloc_mali_vsync_report(MALI_VSYNC_EVENT_BEGIN_WAIT);
 #endif
-		int crtc = 0;
-                if(ioctl(m->framebuffer->fd, FBIO_WAITFORVSYNC, &crtc) < 0)
-		{
-                    ALOGE("FBIO_WAITFORVSYNC failed");
+			int crtc = 0;
+			if(ioctl(m->framebuffer->fd, FBIO_WAITFORVSYNC, &crtc) < 0)
+			{
+				AERR( "FBIO_WAITFORVSYNC failed for fd: %d", m->framebuffer->fd );
+#ifdef MALI_VSYNC_EVENT_REPORT_ENABLE
+				gralloc_mali_vsync_report(MALI_VSYNC_EVENT_END_WAIT);
+#endif
+				return 0;
+			}
 #ifdef MALI_VSYNC_EVENT_REPORT_ENABLE
 			gralloc_mali_vsync_report(MALI_VSYNC_EVENT_END_WAIT);
 #endif
-                    return 0;
-                }
-#ifdef MALI_VSYNC_EVENT_REPORT_ENABLE
-		gralloc_mali_vsync_report(MALI_VSYNC_EVENT_END_WAIT);
-#endif
-                // disable VSYNC
-                interrupt = 0;
-                if(ioctl(m->framebuffer->fd, S3CFB_SET_VSYNC_INT, &interrupt) < 0) 
-		{
-                    ALOGE("S3CFB_SET_VSYNC_INT disable failed");
-                    return 0;
-                }
+			// disable VSYNC
+			interrupt = 0;
+			if(ioctl(m->framebuffer->fd, S3CFB_SET_VSYNC_INT, &interrupt) < 0) 
+			{
+				AERR( "S3CFB_SET_VSYNC_INT disable failed for fd: %d", m->framebuffer->fd );
+				return 0;
+			}
+		}
 #else 
 		/*Standard Android way*/
 #ifdef MALI_VSYNC_EVENT_REPORT_ENABLE
@@ -128,7 +132,7 @@ static int fb_post(struct framebuffer_device_t* dev, buffer_handle_t buffer)
 #endif
 		if (ioctl(m->framebuffer->fd, FBIOPUT_VSCREENINFO, &m->info) == -1) 
 		{
-			ALOGE("FBIOPUT_VSCREENINFO failed");
+			AERR( "FBIOPUT_VSCREENINFO failed for fd: %d", m->framebuffer->fd );
 #ifdef MALI_VSYNC_EVENT_REPORT_ENABLE
 			gralloc_mali_vsync_report(MALI_VSYNC_EVENT_END_WAIT);
 #endif
@@ -249,7 +253,7 @@ int init_frame_buffer_locked(struct private_module_t* module)
 	{
 		info.yres_virtual = info.yres;
 		flags &= ~PAGE_FLIP;
-		ALOGW("FBIOPUT_VSCREENINFO failed, page flipping not supported");
+		AWAR( "FBIOPUT_VSCREENINFO failed, page flipping not supported fd: %d", fd );
 	}
 
 	if (info.yres_virtual < info.yres * 2)
@@ -257,7 +261,7 @@ int init_frame_buffer_locked(struct private_module_t* module)
 		// we need at least 2 for page-flipping
 		info.yres_virtual = info.yres;
 		flags &= ~PAGE_FLIP;
-		ALOGW("page flipping not supported (yres_virtual=%d, requested=%d)", info.yres_virtual, info.yres*2);
+		AWAR( "page flipping not supported (yres_virtual=%d, requested=%d)", info.yres_virtual, info.yres*2 );
 	}
 
 	if (ioctl(fd, FBIOGET_VSCREENINFO, &info) == -1)
@@ -277,7 +281,7 @@ int init_frame_buffer_locked(struct private_module_t* module)
 	}
 	else
 	{
-		ALOGW("fbdev pixclock is zero");
+		AWAR( "fbdev pixclock is zero for fd: %d", fd );
 	}
 
 	if (refreshRate == 0)
@@ -297,7 +301,7 @@ int init_frame_buffer_locked(struct private_module_t* module)
 	float ydpi = (info.yres * 25.4f) / info.height;
 	float fps  = refreshRate / 1000.0f;
 
-	ALOGI("using (fd=%d)\n"
+	AINF("using (fd=%d)\n"
 	     "id           = %s\n"
 	     "xres         = %d px\n"
 	     "yres         = %d px\n"
@@ -318,7 +322,7 @@ int init_frame_buffer_locked(struct private_module_t* module)
 	     info.green.offset, info.green.length,
 	     info.blue.offset, info.blue.length);
 
-	ALOGI("width        = %d mm (%f dpi)\n"
+	AINF("width        = %d mm (%f dpi)\n"
 	     "height       = %d mm (%f dpi)\n"
 	     "refresh rate = %.2f Hz\n",
 	     info.width,  xdpi,
@@ -349,7 +353,7 @@ int init_frame_buffer_locked(struct private_module_t* module)
 	void* vaddr = mmap(0, fbSize, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
 	if (vaddr == MAP_FAILED) 
 	{
-		ALOGE("Error mapping the framebuffer (%s)", strerror(errno));
+		AERR( "Error mapping the framebuffer (%s)", strerror(errno) );
 		return -errno;
 	}
 
@@ -378,7 +382,9 @@ static int fb_close(struct hw_device_t *device)
 	framebuffer_device_t* dev = reinterpret_cast<framebuffer_device_t*>(device);
 	if (dev)
 	{
+#if GRALLOC_ARM_UMP_MODULE
 		ump_close();
+#endif
 		delete dev;
 	}
 	return 0;
@@ -396,7 +402,7 @@ int compositionComplete(struct framebuffer_device_t* dev)
 	   SourceBuffers (Layers) after the compositionComplete() function returns.
 	   However this "bad" behaviour by SurfaceFlinger should not affect performance, 
 	   since the Applications that render the SourceBuffers (Layers) still get the 
-	   full renderpipeline using asynchronouls rendering. So they perform at maximum speed,
+	   full renderpipeline using asynchronous rendering. So they perform at maximum speed,
 	   and because of their complexity compared to the Surface flinger jobs, the Surface flinger
 	   is normally faster even if it does everyhing synchronous and serial. 
 	   */
