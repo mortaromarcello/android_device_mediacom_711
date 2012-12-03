@@ -1,24 +1,45 @@
 #!/system/bin/sh
+
 # An unforunate wrapper script 
 # so that the exit code of pppd may be retrieved
 
-
 PPPD_EXIT=""
 
-/system/bin/setprop "net.gprs.ppp-exit" ""
+log -t pppd "Starting pppd"
+setprop "net.gprs.ppp-exit" ""
 
-/system/bin/log -t pppd "Starting pppd"
+log -t pppd "PORT: $1"
+log -t pppd "USER: $2"
+log -t pppd "PSWD: $3"
+log -t pppd "CONN: $4"
+log -t pppd "DISC: $5"
 
-/system/bin/log -t pppd "PORT: $1"
-/system/bin/log -t pppd "USER: $2"
-/system/bin/log -t pppd "PSWD: $3"
-/system/bin/log -t pppd "CONN: $4"
-/system/bin/log -t pppd "DISC: $5"
+PORT=`echo "$1" | awk {' print $1 '}` 
+SPEED=`echo "$1" | awk {' print $2 '}`
+if [ "$1" = "" ] || [ ! -c "$PORT" ]; then
+    log "ppp-call: device $PORT not present. wait 5sec and exit."
+    sleep 5
+    exit 1
+fi
 
-/system/bin/pppd $1 debug defaultroute noauth connect-delay 5000 ipcp-max-failure 30 nodetach nocrtscts novj noipdefault usepeerdns user "$2" password "$3" connect "$4" disconnect "$5"
+# all ok, need kill some services
+# prevent races
+killall -q usb_modeswitch.sh
+killall -q -9 usb_modeswitch.sh
+killall -q usb_modeswitch
+killall -q -9 usb_modeswitch
+killall -q chat
+killall -q -9 chat
+killall -q pppd
+killall -q -9 pppd
 
-PPPD_EXIT=$?
+PPP_OPTIONS="defaultroute noauth connect-delay 5000 nodetach novj noipdefault usepeerdns"
+PORT_OPTIONS="nocrtscts nocdtrcts"
+IPCP_OPTIONS="ipcp-accept-local ipcp-accept-remote ipcp-max-failure 60"
 
-/system/bin/log -t pppd "pppd exited with $PPPD_EXIT"
+pppd "$PORT" "$SPEED" $PORT_OPTIONS user "$2" password "$3" connect "$4" disconnect "$5" $PPP_OPTIONS $IPCP_OPTIONS
 
-/system/bin/setprop "net.gprs.ppp-exit" "$PPPD_EXIT"
+PPPD_EXIT="$?"
+
+setprop "net.gprs.ppp-exit" "$PPPD_EXIT"
+log -t pppd "pppd exited with $PPPD_EXIT"

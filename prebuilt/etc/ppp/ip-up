@@ -1,26 +1,49 @@
 #!/system/bin/sh
-case $1 in
+
+IFACE="$1"
+
+case $IFACE in
     ppp1)
-	/android/bin/iptables --flush;
-	/android/bin/iptables --table nat --flush;
-	/android/bin/iptables --delete-chain;
-	/android/bin/iptables --table nat --append POSTROUTING --out-interface ppp0 -j MASQUERADE;
-	/android/bin/iptables --append FORWARD --in-interface ppp1 -j ACCEPT;
-	echo 0 > /proc/sys/net/ipv4/ip_forward;
-	echo 1 > /proc/sys/net/ipv4/ip_forward;
-	echo $PPPD_PID > /etc/ppp/ppp1.pid;
+	iptables --flush
+	iptables --table nat --flush
+	iptables --delete-chain
+	iptables --table nat --append POSTROUTING --out-interface ppp0 -j MASQUERADE
+	iptables --append FORWARD --in-interface ppp1 -j ACCEPT
+	echo 0 > /proc/sys/net/ipv4/ip_forward
+	echo 1 > /proc/sys/net/ipv4/ip_forward
+	mkdir -p /data/etc/ppp
+	echo "$PPPD_PID" > /data/etc/ppp/ppp1.pid
 	;;
     ppp0)
-        /system/bin/setprop "net.interfaces.defaultroute" "gprs";
-        echo $PPPD_PID > /etc/ppp/ppp0.pid;
+	log -t pppd "pppd repace default dgw to ppp0."
+        setprop "net.interfaces.defaultroute" "gprs"
+	ip route replace default dev ppp0
+        mkdir -p /data/etc/ppp
+        echo "$PPPD_PID" > /data/etc/ppp/ppp0.pid
         ;;
 esac
 
 # Use interface name if linkname is not available
-NAME=${LINKNAME:-"$1"}
+NAME=${LINKNAME:-"$IFACE"}
 
-/system/bin/setprop "net.$NAME.dns1" "$DNS1"
-/system/bin/setprop "net.$NAME.dns2" "$DNS2" 
-/system/bin/setprop "net.$NAME.local-ip" "$IPLOCAL" 
-/system/bin/setprop "net.$NAME.remote-ip" "$IPREMOTE" 
+if [ "$DNS1" = "10.11.12.13" ] || [ "$DNS1" = "" ]; then
+    log -t pppd "pppd don't get a right dns addr!! Use google dns."
+    DNS1="8.8.8.8"
+    DNS2="8.8.4.4"
+else
+    log -t pppd "pppd use provider dns addr $DNS1 $DNS2"
+fi
 
+ip route flush cache
+
+# Set android variables for use in ui and other logic
+setprop "ril.ifname" "$NAME"
+setprop "net.gprs.dns1" "$DNS1"
+setprop "net.gprs.dns2" "$DNS2"
+setprop "net.gprs.pppd_pid" "$PPPD_PID"
+setprop "net.$NAME.dns1" "$DNS1"
+setprop "net.$NAME.dns2" "$DNS2" 
+setprop "net.$NAME.local-ip" "$IPLOCAL" 
+setprop "net.$NAME.remote-ip" "$IPREMOTE" 
+setprop "net.$NAME.gw" "$IPREMOTE"
+setprop "net.$IFACE.status" "1"
