@@ -78,7 +78,8 @@ BOARD_USE_LEGACY_TOUCHSCREEN := true
 BOARD_HAS_NO_SELECT_BUTTON := true
 TARGET_HARDWARE_INCLUDE := $(ANDROID_BUILD_TOP)/device/mediacom/711/include
 TARGET_RECOVERY_PRE_COMMAND := "echo -n boot-recovery | busybox dd of=/dev/block/nandf count=1 conv=sync; sync"
-#TARGET_RECOVERY_INITRC := device/mediacom/711/ramdisk/recovery_init.rc
+TARGET_RECOVERY_FSTAB:=device/mediacom/711/recovery.fstab
+TARGET_RECOVERY_INITRC := device/mediacom/711/ramdisk/recovery_init.rc
 
 # Wifi stuff
 BOARD_WIFI_VENDOR                := realtek
