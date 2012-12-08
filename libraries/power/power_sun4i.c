@@ -96,6 +96,10 @@ static void sun4i_power_init(struct power_module *module)
                 "85");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay",
                 "20000");
+    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/boost_factor",
+                "0");
+    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/input_boost",
+                "1");
 }
 
 static int boostpulse_open(struct sun4i_power_module *sun4i)
