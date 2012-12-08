@@ -96,8 +96,6 @@ static void sun4i_power_init(struct power_module *module)
                 "85");
     sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay",
                 "20000");
-    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/input_boost",
-                "1");
 }
 
 static int boostpulse_open(struct sun4i_power_module *sun4i)
@@ -149,8 +147,8 @@ static void sun4i_power_set_interactive(struct power_module *module, int on)
     } else
         sysfs_write(SCALINGMAXFREQ_PATH, scaling_max_freq);
 
-    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/input_boost",
-                on ? "1" : "0");
+//    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/input_boost",
+//                on ? "1" : "0");
 }
 
 static void sun4i_power_hint(struct power_module *module, power_hint_t hint,
