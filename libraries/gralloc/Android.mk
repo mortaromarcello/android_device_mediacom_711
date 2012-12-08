@@ -18,12 +18,6 @@
 
 LOCAL_PATH := $(call my-dir)
 
-$(shell mkdir -p out/target/product/711/obj/SHARED_LIBRARIES/libMali_intermediates)
-$(shell mkdir -p out/target/product/711/obj/SHARED_LIBRARIES/libUMP_intermediates)
-$(shell touch out/target/product/711/obj/SHARED_LIBRARIES/libMali_intermediates/export_includes)
-$(shell touch out/target/product/711/obj/SHARED_LIBRARIES/libUMP_intermediates/export_includes)
-
-
 # HAL module implemenation, not prelinked and stored in
 # hw/<OVERLAY_HARDWARE_MODULE_ID>.<ro.product.board>.so
 include $(CLEAR_VARS)

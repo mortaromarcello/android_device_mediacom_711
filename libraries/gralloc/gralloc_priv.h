@@ -28,10 +28,14 @@
 
 #include <hardware/gralloc.h>
 #include <cutils/native_handle.h>
-
-#include <ump/ump.h>
-
+#include <alloc_device.h>
+#include <utils/Log.h>
 #define GRALLOC_ARM_UMP_MODULE 1
+#define GRALLOC_ARM_DMA_BUF_MODULE 0
+
+#if GRALLOC_ARM_UMP_MODULE
+#include <ump/ump.h>
+#endif
 
 struct private_handle_t;
 
@@ -45,6 +49,7 @@ struct private_module_t
 	uint32_t bufferMask;
 	pthread_mutex_t lock;
 	buffer_handle_t currentBuffer;
+	int ion_client;
 
 	struct fb_var_screeninfo info;
 	struct fb_fix_screeninfo finfo;
@@ -75,6 +80,7 @@ struct private_handle_t
 	{
 		PRIV_FLAGS_FRAMEBUFFER = 0x00000001,
 		PRIV_FLAGS_USES_UMP    = 0x00000002,
+		PRIV_FLAGS_USES_ION    = 0x00000004,
 	};
 
 	enum
@@ -85,6 +91,10 @@ struct private_handle_t
 	};
 
 	// ints
+#if GRALLOC_ARM_DMA_BUF_MODULE
+	/*shared file descriptor for dma_buf sharing*/
+	int     share_fd;
+#endif
 	int     magic;
 	int     flags;
 	int     size;
@@ -93,20 +103,39 @@ struct private_handle_t
 	int     writeOwner;
 	int     pid;
 
-    // Following members are for UMP memory only
+	// Following members are for UMP memory only
+#if GRALLOC_ARM_UMP_MODULE
 	int     ump_id;
 	int     ump_mem_handle;
+#define GRALLOC_ARM_UMP_NUM_INTS 2
+#else
+#define GRALLOC_ARM_UMP_NUM_INTS 0
+#endif
 
 	// Following members is for framebuffer only
 	int     fd;
 	int     offset;
 
+#if GRALLOC_ARM_DMA_BUF_MODULE
+	int     ion_client;
+	struct ion_handle *ion_hnd;
+#define GRALLOC_ARM_DMA_BUF_NUM_INTS 3 
+#else
+#define GRALLOC_ARM_DMA_BUF_NUM_INTS 0
+#endif
+
+#if GRALLOC_ARM_DMA_BUF_MODULE
+#define GRALLOC_ARM_NUM_FDS 1	
+#else
+#define GRALLOC_ARM_NUM_FDS 0	
+#endif
 
 #ifdef __cplusplus
-	static const int sNumInts = 11;
-	static const int sNumFds = 0;
+	static const int sNumInts = 9 + GRALLOC_ARM_UMP_NUM_INTS + GRALLOC_ARM_DMA_BUF_NUM_INTS;
+	static const int sNumFds = GRALLOC_ARM_NUM_FDS;
 	static const int sMagic = 0x3141592;
 
+#if GRALLOC_ARM_UMP_MODULE
 	private_handle_t(int flags, int size, int base, int lock_state, ump_secure_id secure_id, ump_handle handle):
 		magic(sMagic),
 		flags(flags),
@@ -119,11 +148,43 @@ struct private_handle_t
 		ump_mem_handle((int)handle),
 		fd(0),
 		offset(0)
+#if GRALLOC_ARM_DMA_BUF_MODULE
+		,ion_client(-1),
+		ion_hnd(NULL)
+#endif
+
 	{
 		version = sizeof(native_handle);
 		numFds = sNumFds;
 		numInts = sNumInts;
 	}
+#endif
+
+#if GRALLOC_ARM_DMA_BUF_MODULE
+	private_handle_t(int flags, int size, int base, int lock_state):
+		magic(sMagic),
+		flags(flags),
+		size(size),
+		base(base),
+		lockState(lock_state),
+		writeOwner(0),
+		pid(getpid()),
+#if GRALLOC_ARM_UMP_MODULE
+		ump_id((int)UMP_INVALID_SECURE_ID),
+		ump_mem_handle((int)UMP_INVALID_MEMORY_HANDLE),
+#endif
+		fd(0),
+		offset(0),
+		ion_client(-1),
+		ion_hnd(NULL)
+
+	{
+		version = sizeof(native_handle);
+		numFds = sNumFds;
+		numInts = sNumInts;
+	}
+
+#endif
 
 	private_handle_t(int flags, int size, int base, int lock_state, int fb_file, int fb_offset):
 		magic(sMagic),
@@ -133,10 +194,17 @@ struct private_handle_t
 		lockState(lock_state),
 		writeOwner(0),
 		pid(getpid()),
+#if GRALLOC_ARM_UMP_MODULE
 		ump_id((int)UMP_INVALID_SECURE_ID),
 		ump_mem_handle((int)UMP_INVALID_MEMORY_HANDLE),
+#endif
 		fd(fb_file),
 		offset(fb_offset)
+#if GRALLOC_ARM_DMA_BUF_MODULE
+		,ion_client(-1),
+		ion_hnd(NULL)
+#endif
+
 	{
 		version = sizeof(native_handle);
 		numFds = sNumFds;
