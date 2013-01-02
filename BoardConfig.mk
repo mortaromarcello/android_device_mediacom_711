@@ -79,7 +79,7 @@ TARGET_HARDWARE_INCLUDE := $(ANDROID_BUILD_TOP)/device/mediacom/711/include
 TARGET_RECOVERY_PRE_COMMAND := "echo -n boot-recovery | busybox dd of=/dev/block/nandf count=1 conv=sync; sync"
 TARGET_RECOVERY_FSTAB:=device/mediacom/711/recovery.fstab
 TARGET_RECOVERY_INITRC := device/mediacom/711/ramdisk/recovery_init.rc
-TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
+TARGET_RECOVERY_PIXEL_FORMAT := BGRA_8888
 
 # Wifi stuff
 BOARD_WIFI_VENDOR                := realtek
