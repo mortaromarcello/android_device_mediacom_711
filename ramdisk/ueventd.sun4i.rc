@@ -34,5 +34,8 @@
 #ChristianTroy
 
 # dvb-usb
-/dev/dvb*    0777  system    system
+/dev/dvb*   0666  system    system
+/dev/dvb    0777  system    system
+/dev/dvb/adapter0   0777  system  system
+/dev/dvb/adapter0/* 0666  system  system
 #
