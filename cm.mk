@@ -15,7 +15,7 @@
 #
 
 $(call inherit-product, device/mediacom/711/full_711.mk)
-# Inherit some common CM9 stuff.
+# Inherit some common CM stuff.
 $(call inherit-product, vendor/cm/config/common_full_tablet_wifionly.mk)
 $(call inherit-product, vendor/cm/config/gsm.mk)
 $(call inherit-product, device/mediacom/711/711-blobs.mk)

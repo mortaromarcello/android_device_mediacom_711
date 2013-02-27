@@ -15,6 +15,9 @@
 #
 
 PRODUCT_CHARACTERISTICS := tablet
+
+PRODUCT_TAGS += dalvik.gc.type-precise
+
 DEVICE_PACKAGE_OVERLAYS := device/mediacom/711/overlay
 
 ## (3)  Finally, the least specific parts, i.e. the non-GSM-specific aspects
