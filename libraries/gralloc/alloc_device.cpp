@@ -78,7 +78,7 @@ static int __ump_alloc_should_fail()
 	/* failure simulation is enabled by setting the first_fail property to non-zero */
 	if (first_fail > 0)
 	{
-		ALOGI("iteration %u (fail=%u, period=%u)\n", call_count, first_fail, fail_period);
+		LOGI("iteration %u (fail=%u, period=%u)\n", call_count, first_fail, fail_period);
 		
 		fail = 	(call_count == first_fail) ||
 				(call_count > first_fail && fail_period > 0 && 0 == (call_count - first_fail) % fail_period);
@@ -103,7 +103,9 @@ static int gralloc_alloc_buffer(alloc_device_t* dev, size_t size, int usage, buf
 		int shared_fd;
 		int ret;
 
-		ret = ion_alloc( m->ion_client, size, 0, ION_HEAP_SYSTEM_MASK, &ion_hnd );
+		ret = ion_alloc(m->ion_client, size, 0, ION_HEAP_SYSTEM_MASK,
+		                ION_FLAG_CACHED | ION_FLAG_CACHED_NEEDS_SYNC,
+		                &ion_hnd );
 		if ( ret != 0) 
 		{
 			AERR("Failed to ion_alloc from ion_client:%d", m->ion_client);
@@ -313,7 +315,6 @@ static int alloc_device_alloc(alloc_device_t* dev, int w, int h, int format, int
 	}
 	else
 	{
-		int align = 8;
 		int bpp = 0;
 		switch (format)
 		{
@@ -333,17 +334,21 @@ static int alloc_device_alloc(alloc_device_t* dev, int w, int h, int format, int
 		default:
 			return -EINVAL;
 		}
-		size_t bpr = (w*bpp + (align-1)) & ~(align-1);
+		size_t bpr = GRALLOC_ALIGN(w * bpp, 64);
 		size = bpr * h;
 		stride = bpr / bpp;
 	}
 
 	int err;
+
+	#ifndef MALI_600
 	if (usage & GRALLOC_USAGE_HW_FB)
 	{
 		err = gralloc_alloc_framebuffer(dev, size, usage, pHandle);
 	}
 	else
+	#endif
+
 	{
 		err = gralloc_alloc_buffer(dev, size, usage, pHandle);
 	}

@@ -30,8 +30,16 @@
 #include <cutils/native_handle.h>
 #include <alloc_device.h>
 #include <utils/Log.h>
+
+#ifdef MALI_600
+#define GRALLOC_ARM_UMP_MODULE 0
+#define GRALLOC_ARM_DMA_BUF_MODULE 1
+#else
 #define GRALLOC_ARM_UMP_MODULE 1
 #define GRALLOC_ARM_DMA_BUF_MODULE 0
+#endif
+
+#define NUM_FB_BUFFERS 2
 
 #if GRALLOC_ARM_UMP_MODULE
 #include <ump/ump.h>
@@ -119,7 +127,7 @@ struct private_handle_t
 #if GRALLOC_ARM_DMA_BUF_MODULE
 	int     ion_client;
 	struct ion_handle *ion_hnd;
-#define GRALLOC_ARM_DMA_BUF_NUM_INTS 3 
+#define GRALLOC_ARM_DMA_BUF_NUM_INTS 2
 #else
 #define GRALLOC_ARM_DMA_BUF_NUM_INTS 0
 #endif

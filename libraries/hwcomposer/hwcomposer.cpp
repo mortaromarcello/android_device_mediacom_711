@@ -20,6 +20,12 @@
 
 #include <fcntl.h>
 #include <errno.h>
+#include <time.h>
+#include <signal.h>
+#include <pthread.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <sys/ioctl.h>
 
 #include <cutils/log.h>
 #include <cutils/atomic.h>
@@ -236,10 +242,10 @@ static int hwc_requestlayer(sun4i_hwc_context_t *ctx,uint32_t screenid)
     return  0;
 }
 
-static void hwc_computerlayerdisplayframe(hwc_composer_device_t *dev)
+static void hwc_computerlayerdisplayframe(hwc_composer_device_1_t *dev)
 {
     sun4i_hwc_context_t           *ctx = (sun4i_hwc_context_t *)dev;
-    sun4i_hwc_layer_t            *curlayer = (sun4i_hwc_layer_t *)&ctx->hwc_layer;
+    sun4i_hwc_layer_1_t            *curlayer = (sun4i_hwc_layer_1_t *)&ctx->hwc_layer;
     int                         temp_x = curlayer->posX_org;
     int                         temp_y = curlayer->posY_org;
     int                         temp_w = curlayer->posW_org;
@@ -431,7 +437,7 @@ static void hwc_computerlayerdisplayframe(hwc_composer_device_t *dev)
      }
 }
 
-static bool hwc_can_render_layer(hwc_layer_t *layer)
+static bool hwc_can_render_layer(hwc_layer_1_t *layer)
 {
     if((layer->format == HWC_FORMAT_MBYUV420)
         ||(layer->format == HWC_FORMAT_MBYUV422)
@@ -497,7 +503,7 @@ static int hwc_setrect(sun4i_hwc_context_t *ctx,hwc_rect_t *croprect,hwc_rect_t 
             ctx->hwc_layer.posW_org = displayframe->right - displayframe->left;
             ctx->hwc_layer.posH_org = displayframe->bottom - displayframe->top;
 
-            hwc_computerlayerdisplayframe((hwc_composer_device_t *)ctx);
+            hwc_computerlayerdisplayframe((hwc_composer_device_1_t *)ctx);
 
             tmpLayerAttr.scn_win.x            = ctx->hwc_layer.posX;
             tmpLayerAttr.scn_win.y            = ctx->hwc_layer.posY;
@@ -537,8 +543,9 @@ static int hwc_setrect(sun4i_hwc_context_t *ctx,hwc_rect_t *croprect,hwc_rect_t 
 }
 
 /*****************************************************************************/
-static int hwc_prepare(hwc_composer_device_t *dev, hwc_layer_list_t* list)
+static int hwc_prepare(hwc_composer_device_1_t *dev, size_t numDisplays, hwc_display_contents_1_t** lists)
 {
+    hwc_display_contents_1_t* list = lists[0];
     //ALOGV("hwc_prepare list->numHwLayers = %d\n",list->numHwLayers);
     //list is null on HWComposer->disable() on surfaceflinger
     if (list && (list->flags & HWC_GEOMETRY_CHANGED))
@@ -566,7 +573,7 @@ static int hwc_prepare(hwc_composer_device_t *dev, hwc_layer_list_t* list)
     return 0;
 }
 
-static int hwc_startset(hwc_composer_device_t *dev)
+static int hwc_startset(hwc_composer_device_1_t *dev)
 {
     sun4i_hwc_context_t           *ctx = (sun4i_hwc_context_t *)dev;
 
@@ -586,7 +593,7 @@ static int hwc_startset(hwc_composer_device_t *dev)
     return ioctl(ctx->dispfd,DISP_CMD_START_CMD_CACHE,(void*)args);//disable the global alpha, use the pixel's alpha
 }
 
-static int hwc_endset(hwc_composer_device_t *dev)
+static int hwc_endset(hwc_composer_device_1_t *dev)
 {
     sun4i_hwc_context_t           *ctx = (sun4i_hwc_context_t *)dev;
 
@@ -1240,7 +1247,7 @@ static int hwc_setscreen(sun4i_hwc_context_t *ctx,uint32_t value)
     ctx->hwc_layer.dispH            = g_lcd_height;
     ALOGV("ctx->hwc_layer.dispW = %d,ctx->hwc_layer.dispH = %d\n",ctx->hwc_layer.dispW,ctx->hwc_layer.dispH);
 
-    hwc_computerlayerdisplayframe((hwc_composer_device_t *)ctx);
+    hwc_computerlayerdisplayframe((hwc_composer_device_1_t *)ctx);
     layer_info.scn_win.x             = ctx->hwc_layer.posX;
     layer_info.scn_win.y             = ctx->hwc_layer.posY;
     layer_info.scn_win.width         = ctx->hwc_layer.posW;
@@ -1803,7 +1810,7 @@ static int hwc_set3dmode(sun4i_hwc_context_t *ctx,int para)
     return 0;
 }
 
-static int hwc_setparameter(hwc_composer_device_t *dev,uint32_t param,uint32_t value)
+static int hwc_setparameter(hwc_composer_device_1_t *dev,uint32_t param,uint32_t value)
 {
     int                         ret = 0;
     sun4i_hwc_context_t           *ctx = (sun4i_hwc_context_t *)dev;
@@ -1911,12 +1918,12 @@ static int hwc_setparameter(hwc_composer_device_t *dev,uint32_t param,uint32_t v
     return ( ret );
 }
 
-static uint32_t hwc_getparameter(hwc_composer_device_t *dev,uint32_t cmd)
+static uint32_t hwc_getparameter(hwc_composer_device_1_t *dev,uint32_t cmd)
 {
     return  0;
 }
 
-static int hwc_set_layer(hwc_composer_device_t *dev,hwc_layer_list_t* list)
+static int hwc_set_layer(hwc_composer_device_1_t *dev, hwc_display_contents_1_t* list)
 {
     int                         ret = 0;
     sun4i_hwc_context_t           *ctx = (sun4i_hwc_context_t *)dev;
@@ -1942,15 +1949,15 @@ static int hwc_set_layer(hwc_composer_device_t *dev,hwc_layer_list_t* list)
     return ret;
 }
 
-static int hwc_set(hwc_composer_device_t *dev,
-        hwc_display_t dpy,
-        hwc_surface_t sur,
-        hwc_layer_list_t* list)
+static int hwc_set(hwc_composer_device_1_t *dev,
+        size_t numDisplays,
+        hwc_display_contents_1_t** lists)
 {
+    hwc_display_contents_1_t* list = lists[0];
     //for (size_t i=0 ; i<list->numHwLayers ; i++) {
     //    dump_layer(&list->hwLayers[i]);
     //}
-    EGLBoolean sucess = eglSwapBuffers((EGLDisplay)dpy, (EGLSurface)sur);
+    EGLBoolean sucess = eglSwapBuffers((EGLDisplay)list->dpy, (EGLSurface)list->sur);
     if (unlikely(!sucess))
         return HWC_EGL_ERROR;
 
@@ -2014,6 +2021,58 @@ static int hwc_device_close(struct hw_device_t *dev)
     return 0;
 }
 
+static void *hwc_vsync_thread(void *data)
+{
+    int arg;
+    hwc_context_t *ctx = (hwc_context_t *)data;
+    int fb = open("/dev/graphics/fb0", O_RDWR);
+    if(fb < 0) {
+        ALOGE("failed to open fb0\n");
+        return NULL;
+    }
+
+    setpriority(PRIO_PROCESS, 0, HAL_PRIORITY_URGENT_DISPLAY);
+
+    while (true) {
+        arg = 0;
+        //ioctl(fb, FBIO_WAITFORVSYNC, &arg);
+        #define HZ 30
+        usleep(1000000/HZ);
+        if (ctx->vsync_enabled)
+            ctx->procs->vsync(ctx->procs, 0, time(NULL));
+    }
+
+    close(fb);
+
+    return NULL;
+}
+
+static int hwc_blank(hwc_composer_device_1* a, int b, int c)
+{
+    /* STUB */
+    return 0;
+}
+
+static int hwc_eventControl(hwc_composer_device_1* dev, int dpy, int event,
+                            int enabled)
+{
+    struct hwc_context_t* ctx = (sun4i_hwc_context_t*) dev;
+
+    switch (event) {
+    case HWC_EVENT_VSYNC:
+        ctx->vsync_enabled = !!enabled;
+        return 0;
+    }
+    return -EINVAL;
+}
+
+static void hwc_registerProcs(struct hwc_composer_device_1* dev,
+        hwc_procs_t const* procs)
+{
+    struct hwc_context_t* ctx = (struct hwc_context_t*)dev;
+    ctx->procs = const_cast<hwc_procs_t *>(procs);
+}
+
 /*****************************************************************************/
 
 static int hwc_device_open(const struct hw_module_t* module, const char* name,
@@ -2030,16 +2089,23 @@ static int hwc_device_open(const struct hw_module_t* module, const char* name,
 
         /* initialize the procs */
         dev->device.common.tag      = HARDWARE_DEVICE_TAG;
-        dev->device.common.version  = 0;
+        dev->device.common.version  = HWC_DEVICE_API_VERSION_1_0;
         dev->device.common.module   = const_cast<hw_module_t*>(module);
         dev->device.common.close    = hwc_device_close;
 
         dev->device.prepare         = hwc_prepare;
         dev->device.set             = hwc_set;
+        dev->device.blank           = hwc_blank;
+        dev->device.eventControl    = hwc_eventControl;
+        dev->device.registerProcs   = hwc_registerProcs;
         dev->device.setparameter    = hwc_setparameter;
         dev->device.getparameter    = hwc_getparameter;
 
         *device = &dev->device.common;
+
+        dev->vsync_enabled = false;
+        pthread_create(&dev->vsync_thread, NULL, hwc_vsync_thread, dev);
+
         status = 0;
     }
     return status;

@@ -245,12 +245,6 @@ static int gralloc_lock(gralloc_module_t const* module, buffer_handle_t handle, 
 	{
 		hnd->writeOwner = usage & GRALLOC_USAGE_SW_WRITE_MASK;
 	}
-#if GRALLOC_ARM_DMA_BUF_MODULE && 0
-	if ( hnd->flags & private_handle_t::PRIV_FLAGS_USES_ION && usage & GRALLOC_USAGE_SW_READ_MASK)
-	{
-		ion_msync(hnd->ion_client, hnd->share_fd, IMSYNC_DEV_TO_READ | IMSYNC_SYNC_FOR_DEV, hnd->size, hnd->offset);
-	}
-#endif
 	if (usage & (GRALLOC_USAGE_SW_READ_MASK | GRALLOC_USAGE_SW_WRITE_MASK))
 	{
 		*vaddr = (void*)hnd->base;
@@ -278,10 +272,11 @@ static int gralloc_unlock(gralloc_module_t const* module, buffer_handle_t handle
 #else
 		AERR( "Buffer 0x%x is UMP type but it is not supported", (unsigned int)hnd );
 #endif
-	} else if ( hnd->flags & private_handle_t::PRIV_FLAGS_USES_ION && hnd->writeOwner)
+	}
+	else if ( hnd->flags & private_handle_t::PRIV_FLAGS_USES_ION && hnd->writeOwner)
 	{
-#if GRALLOC_ARM_DMA_BUF_MODULE && 0 
-		ion_msync( hnd->ion_client, hnd->share_fd, IMSYNC_DEV_TO_READ | IMSYNC_SYNC_FOR_DEV, hnd->size, hnd->offset );
+#if GRALLOC_ARM_DMA_BUF_MODULE
+		ion_sync_fd(hnd->ion_client, hnd->share_fd);
 #endif
 	}
 	return 0;

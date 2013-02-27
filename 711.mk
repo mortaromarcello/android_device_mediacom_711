@@ -56,7 +56,7 @@ PRODUCT_PACKAGES += gralloc.exDroid hwcomposer.exDroid display.exDroid
 # Sensors
 #PRODUCT_PACKAGES += memsicd sensors.exDroid libaccelcal
 # Camera
-PRODUCT_PACKAGES += camera.exDroid
+#PRODUCT_PACKAGES += camera.exDroid
 #
 PRODUCT_PACKAGES += lights.exDroid
 
@@ -72,13 +72,13 @@ PRODUCT_PACKAGES += make_ext4fs e2fsck
 PRODUCT_PACKAGES += audio.a2dp.default libaudioutils libtinyalsa audio_policy.sun4i audio.primary.exDroid audio.usb.default
 
 # CedarX libraries
-PRODUCT_PACKAGES += libCedarA libCedarX libcedarv libcedarxbase libcedarxosal libswdrm libcedarxsftdemux
-PRODUCT_PACKAGES += libcedarv_adapter libve libfacedetection libaw_audio libaw_audioa libcedarv_base
-PRODUCT_PACKAGES += libstagefright_soft_cedar_h264dec librtmp
-PRODUCT_PACKAGES += libthirdpartstream libcedarxsftstream
+#PRODUCT_PACKAGES += libCedarA libCedarX libcedarv libcedarxbase libcedarxosal libswdrm libcedarxsftdemux
+#PRODUCT_PACKAGES += libcedarv_adapter libve libfacedetection libaw_audio libaw_audioa libcedarv_base
+#PRODUCT_PACKAGES += libstagefright_soft_cedar_h264dec librtmp
+#PRODUCT_PACKAGES += libthirdpartstream libcedarxsftstream
 
 # Apps
-PRODUCT_PACKAGES += FDroid
+#PRODUCT_PACKAGES += FDroid
 #PRODUCT_PACKAGES += GhostCommander
 
 

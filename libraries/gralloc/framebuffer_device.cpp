@@ -38,7 +38,7 @@
 #include "gralloc_helper.h"
 
 // numbers of buffers for page flipping
-#define NUM_BUFFERS 2
+#define NUM_BUFFERS NUM_FB_BUFFERS 
 
 enum
 {
@@ -274,8 +274,8 @@ int init_frame_buffer_locked(struct private_module_t* module)
 	{
 		refreshRate = 1000000000000000LLU /
 		(
-			uint64_t( info.upper_margin + info.lower_margin + info.yres )
-			* ( info.left_margin  + info.right_margin + info.xres )
+			uint64_t( info.upper_margin + info.lower_margin + info.yres + info.hsync_len )
+			* ( info.left_margin  + info.right_margin + info.xres + info.vsync_len )
 			* info.pixclock
 		);
 	}
