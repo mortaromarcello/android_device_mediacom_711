@@ -47,8 +47,8 @@ PRODUCT_COPY_FILES += \
 #	$(DEVICE_PREBUILT)/lib/hw/gps.exDroid.so:system/lib/hw/gps.exDroid.so \
 
 # App
-PRODUCT_COPY_FILES += \
-	$(DEVICE_PREBUILT)/app/novo7tools.apk:system/app/novo7tools.apk
+#PRODUCT_COPY_FILES += \
+#	$(DEVICE_PREBUILT)/app/novo7tools.apk:system/app/novo7tools.apk
 
 # OTG/3G stuff
 PRODUCT_COPY_FILES += \
