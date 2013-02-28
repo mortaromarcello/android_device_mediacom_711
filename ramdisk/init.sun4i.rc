@@ -97,7 +97,12 @@ on boot
 
 on post-fs-data
 	mkdir /data/misc/sensors 0777 system system
+	mkdir /data/media 0770 media_rw media_rw
 	setprop vold.post_fs_data_done 1
+
+# virtual sdcard daemon running as media_rw (1023)
+service sdcard /system/bin/sdcard /data/media /mnt/shell/emulated 1023 1023
+	class late_start
 
 # wifi related service
 service wpa_supplicant /system/bin/wpa_supplicant -D wext -i wlan0 \
