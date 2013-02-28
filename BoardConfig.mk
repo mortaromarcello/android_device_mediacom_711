@@ -63,6 +63,8 @@ TARGET_BOOTANIMATION_USE_RGB565 := true
 TARGET_SCREEN_WIDTH := 800
 TARGET_SCREEN_EIGHT := 480
 
+BOARD_UMS_LUNFILE := "/sys/class/android_usb/android0/f_mass_storage/lun/file"
+BOARD_UMS_2ND_LUNFILE := "/sys/class/android_usb/android0/f_mass_storage/lun1/file"
 
 # use our own su for root
 BOARD_USES_ROOT_SU := true
