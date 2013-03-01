@@ -101,9 +101,6 @@ on post-fs-data
 	mkdir /data/media 0770 media_rw media_rw
 	setprop vold.post_fs_data_done 1
 
-# virtual sdcard daemon running as media_rw (1023)
-service sdcard /system/bin/sdcard /data/media /mnt/shell/emulated 1023 1023
-	class late_start
 
 # wifi related service
 service wpa_supplicant /system/bin/wpa_supplicant -D wext -i wlan0 \
@@ -155,6 +152,19 @@ service iprenew_eth0 /system/bin/dhcpcd -n
 
 service memsicd /system/bin/logwrapper /system/bin/memsicd
    class main
+
+# create filesystem if necessary
+service setup_fs /system/bin/setup_fs \
+            /dev/block/nande \
+            /dev/block/nandh
+    class core
+    user root
+    group root
+    oneshot
+
+# virtual sdcard daemon running as media_rw (1023)
+service sdcard /system/bin/sdcard /data/media /mnt/shell/emulated 1023 1023
+	class late_start
 
 on property:dev.bootcomplete=1
     write /sys/module/lowmemorykiller/parameters/minfree "2048,4096,8192,80000,90000,100000"
