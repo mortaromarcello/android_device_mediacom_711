@@ -22,9 +22,7 @@ on init
 	symlink /storage/sdcard1 /mnt/extsd
 
 on fs
-    mount ext4 /dev/block/nandd /system wait ro
-    mount ext4 /dev/block/nande /data wait noatime nosuid nodev
-    mount ext4 /dev/block/nandh /cache wait noatime nosuid nodev
+    mount_all /fstab.sun4i
 
 on boot	
         # Enable interactive governor
