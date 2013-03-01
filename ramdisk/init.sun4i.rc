@@ -18,7 +18,7 @@ on init
 	export SECONDARY_STORAGE /storage/sdcard1
 
 	mkdir /storage/sdcard1 0000 system system
-	mkdir /storage/sdcard2 0000 system system
+	mkdir /storage/usbdisk0 0000 system system
 	symlink /storage/sdcard1 /mnt/extsd
 
 on fs
@@ -96,7 +96,7 @@ on boot
 on post-fs-data
 	mkdir /data/misc/wifi/sockets 0770 wifi wifi
 	mkdir /data/misc/sensors 0777 system system
-	mkdir /data/media 0770 media_rw media_rw
+#	mkdir /data/media 0770 media_rw media_rw
 	setprop vold.post_fs_data_done 1
 
 
@@ -161,8 +161,8 @@ service setup_fs /system/bin/setup_fs \
     oneshot
 
 # virtual sdcard daemon running as media_rw (1023)
-service sdcard /system/bin/sdcard /data/media /mnt/shell/emulated 1023 1023
-	class late_start
+#service sdcard /system/bin/sdcard /data/media /mnt/shell/emulated 1023 1023
+#	class late_start
 
 on property:dev.bootcomplete=1
     write /sys/module/lowmemorykiller/parameters/minfree "2048,4096,8192,80000,90000,100000"
