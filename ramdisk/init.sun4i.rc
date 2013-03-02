@@ -3,8 +3,11 @@ on init
 	# See storage config details at http://source.android.com/tech/storage
 	mkdir /mnt/shell/emulated 0700 shell shell
 	mkdir /storage/emulated 0555 root root
+	mkdir /storage/sdcard1 0000 system system
+	mkdir /storage/usbdisk0 0000 system system
 
 	export EXTERNAL_STORAGE /storage/emulated/legacy
+	export SECONDARY_STORAGE /storage/sdcard1
 	export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
 	export EMULATED_STORAGE_TARGET /storage/emulated
 
@@ -13,13 +16,8 @@ on init
 	symlink /storage/emulated/legacy /mnt/sdcard
 	symlink /storage/emulated/legacy /storage/sdcard0
 	symlink /mnt/shell/emulated/0 /storage/emulated/legacy
-
-	# Enable secondary storage
-	export SECONDARY_STORAGE /storage/sdcard1
-
-	mkdir /storage/sdcard1 0000 system system
-	mkdir /storage/sdcard2 0000 system system
 	symlink /storage/sdcard1 /mnt/extsd
+	symlink /storage/usbdisk0 /mnt/usbdisk
 
 on fs
 	mount_all /fstab.sun4i
@@ -99,6 +97,7 @@ on post-fs-data
 	mkdir /data/misc/wifi/sockets 0770 wifi wifi
 	mkdir /data/misc/sensors 0777 system system
 	mkdir /data/media 0770 media_rw media_rw
+	chown media_rw media_rw /data/media
 	setprop vold.post_fs_data_done 1
 
 
@@ -152,15 +151,6 @@ service iprenew_eth0 /system/bin/dhcpcd -n
 
 service memsicd /system/bin/logwrapper /system/bin/memsicd
 	class main
-
-# create filesystem if necessary
-service setup_fs /system/bin/setup_fs \
-				/dev/block/nande \
-				/dev/block/nandh
-	class core
-	user root
-	group root
-	oneshot
 
 # virtual sdcard daemon running as media_rw (1023)
 service sdcard /system/bin/sdcard /data/media /mnt/shell/emulated 1023 1023
