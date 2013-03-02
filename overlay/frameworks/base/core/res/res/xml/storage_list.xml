@@ -38,4 +38,10 @@
         android:storageDescription="@string/storage_internal"
         android:emulated="true"
         android:mtpReserve="100" />
+
+    <storage
+        android:storageDescription="@string/storage_sd_card" 
+        android:primary="false"
+        android:emulated="false"
+        android:removable="true" />
 </StorageList>
