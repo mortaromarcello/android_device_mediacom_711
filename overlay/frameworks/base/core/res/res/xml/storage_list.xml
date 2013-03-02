@@ -40,6 +40,7 @@
         android:mtpReserve="100" />
 
     <storage
+        android:mountPoint="/storage/sdcard1"
         android:storageDescription="@string/storage_sd_card" 
         android:primary="false"
         android:emulated="false"
@@ -47,6 +48,7 @@
         android:mtpReserve="100" />
 
     <storage
+        android:mountPoint="/storage/sdcard2"
         android:storageDescription="@string/storage_usb"
         android:primary="false"
         android:emulated="false"

@@ -52,6 +52,7 @@ on boot
 	insmod /system/lib/modules/mali.ko
 	# touchscreen drivers
 	#insmod /system/lib/modules/ft5x_ts.ko
+	insmod /system/lib/modules/ft5x_ts_711.ko
 	#insmod /system/lib/modules/goodix_touch_3F.ko
 	#insmod /system/lib/modules/goodix_touch.ko
 	#insmod /system/lib/modules/gt801_2plus1.ko
