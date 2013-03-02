@@ -45,6 +45,7 @@
         android:primary="false"
         android:emulated="false"
         android:removable="true"
+        android:allowMassStorage="true"
         android:mtpReserve="100" />
 
     <storage
