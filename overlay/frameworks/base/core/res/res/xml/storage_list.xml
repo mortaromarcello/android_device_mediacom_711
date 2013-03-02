@@ -43,5 +43,13 @@
         android:storageDescription="@string/storage_sd_card" 
         android:primary="false"
         android:emulated="false"
-        android:removable="true" />
+        android:removable="true"
+        android:mtpReserve="100" />
+
+    <storage
+        android:storageDescription="@string/storage_usb"
+        android:primary="false"
+        android:emulated="false"
+        android:removable="true"
+        android:mtpReserve="100" />
 </StorageList>
