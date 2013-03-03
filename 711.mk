@@ -15,6 +15,9 @@
 #
 
 PRODUCT_CHARACTERISTICS := tablet
+
+PRODUCT_TAGS += dalvik.gc.type-precise
+
 DEVICE_PACKAGE_OVERLAYS := device/mediacom/711/overlay
 
 ## (3)  Finally, the least specific parts, i.e. the non-GSM-specific aspects
@@ -32,7 +35,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Permissions
 PRODUCT_COPY_FILES += \
 	frameworks/native/data/etc/tablet_core_hardware.xml:system/etc/permissions/tablet_core_hardware.xml \
-	frameworks/native/data/etc/android.hardware.camera.autofocus.xml:system/etc/permissions/android.hardware.camera.autofocus.xml \
+	frameworks/native/data/etc/android.hardware.camera.flash-autofocus.xml:system/etc/permissions/android.hardware.camera.flash-autofocus.xml \
 	frameworks/native/data/etc/android.hardware.camera.front.xml:system/etc/permissions/android.hardware.camera.front.xml \
 	frameworks/native/data/etc/android.hardware.camera.xml:system/etc/permissions/android.hardware.camera.xml \
 	frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml \
@@ -45,7 +48,7 @@ PRODUCT_COPY_FILES += \
 	frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml \
 	frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
 	frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
-	packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:/system/etc/permissions/android.software.live_wallpaper.xml
+	packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:/system/etc/permissions/android.software.live_wallpaper.xml \
 
 # Other stuff
 PRODUCT_PACKAGES += librs_jni rild_sun4i power.sun4i

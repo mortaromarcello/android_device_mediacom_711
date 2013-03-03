@@ -63,6 +63,8 @@ TARGET_BOOTANIMATION_USE_RGB565 := true
 TARGET_SCREEN_WIDTH := 800
 TARGET_SCREEN_EIGHT := 480
 
+BOARD_UMS_LUNFILE := "/sys/class/android_usb/android0/f_mass_storage/lun/file"
+BOARD_UMS_2ND_LUNFILE := "/sys/class/android_usb/android0/f_mass_storage/lun1/file"
 
 # use our own su for root
 BOARD_USES_ROOT_SU := true
@@ -96,7 +98,7 @@ WIFI_DRIVER_FW_PATH_STA   := ""
 WIFI_DRIVER_FW_PATH_AP    := ""
 WIFI_DRIVER_FW_PATH_P2P   := ""
 WIFI_DRIVER_FW_PATH_PARAM := ""
-COMMON_GLOBAL_CFLAGS += -DICS_CAMERA_BLOB -DICS_AUDIO_BLOB#temporary
+COMMON_GLOBAL_CFLAGS += -DICS_CAMERA_BLOB #temporary
 
 ENABLE_WEBGL := true
 # Extra : to build external modules sources
