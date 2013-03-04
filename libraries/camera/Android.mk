@@ -35,9 +35,7 @@ LOCAL_SHARED_LIBRARIES:= \
 LOCAL_SHARED_LIBRARIES += \
 	libjpeg \
 	libskia \
-	libandroid_runtime \
-	libCedarX \
-	libcedarxosal
+	libandroid_runtime
 	
 LOCAL_C_INCLUDES += \
 	external/jpeg \
