@@ -59,7 +59,7 @@ PRODUCT_PACKAGES += gralloc.exDroid hwcomposer.exDroid display.exDroid
 # Sensors
 #PRODUCT_PACKAGES += memsicd sensors.exDroid libaccelcal
 # Camera
-#PRODUCT_PACKAGES += camera.exDroid
+PRODUCT_PACKAGES += camera.exDroid
 #
 PRODUCT_PACKAGES += lights.exDroid
 

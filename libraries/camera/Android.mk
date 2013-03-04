@@ -18,6 +18,12 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
 LOCAL_CFLAGS += -fno-short-enums -DQEMU_HARDWARE
+LOCAL_LDFLAGS += \
+	libcedara_decoder.a \
+	libcedarxosal.so \
+	libcedarv_adapter.so
+	
+
 LOCAL_SHARED_LIBRARIES:= \
     libbinder \
     libutils \
@@ -38,8 +44,7 @@ LOCAL_C_INCLUDES += \
 	external/skia/include/core \
 	frameworks/base/core/jni/android/graphics \
 	$(TARGET_HARDWARE_INCLUDE) \
-	external/cedarx/CedarX/include/include_camera \
-        frameworks/native/include \
+	frameworks/native/include \
 
 LOCAL_SRC_FILES := \
 	CameraHal.cpp \
