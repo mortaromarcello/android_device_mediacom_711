@@ -19,10 +19,10 @@ include $(CLEAR_VARS)
 LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
 LOCAL_CFLAGS += -fno-short-enums -DQEMU_HARDWARE
 LOCAL_LDFLAGS += \
-	$(DEVICE_PREBUILT)/lib/libcedara_decoder.a \
+	$(LOCAL_PATH)/lib/libcedara_decoder.a \
+	$(LOCAL_PATH)/lib/libjpgenc.a \
 	$(DEVICE_PREBUILT)/lib/libcedarxosal.so \
 	$(DEVICE_PREBUILT)/lib/libcedarv_adapter.so \
-	$(DEVICE_PREBUILT)/lib/libjpgenc.a \
 	$(DEVICE_PREBUILT)/lib/libcedarxbase.so
 
 LOCAL_SHARED_LIBRARIES:= \
