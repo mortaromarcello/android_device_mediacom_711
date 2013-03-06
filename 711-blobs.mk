@@ -34,6 +34,9 @@ PRODUCT_COPY_FILES += \
 	$(DEVICE_PREBUILT)/lib/libUMP.so:system/lib/libUMP.so \
 	$(DEVICE_PREBUILT)/lib/libMali.so:obj/lib/libMali.so \
 	$(DEVICE_PREBUILT)/lib/libUMP.so:obj/lib/libUMP.so \
+	$(DEVICE_PREBUILT)/lib/libcedarxosal.so:system/lib/libcedarxosal.so \
+	$(DEVICE_PREBUILT)/lib/libcedarv_adapter.so:system/lib/libcedarv_adapter.so \
+	$(DEVICE_PREBUILT)/lib/libcedarxbase.so:system/lib/libcedarxbase.so
 
 # Camera
 PRODUCT_COPY_FILES += \
