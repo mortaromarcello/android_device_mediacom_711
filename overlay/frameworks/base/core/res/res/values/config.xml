@@ -81,6 +81,9 @@
   
     <bool name="config_showNavigationBar">true</bool>
     
+    <!-- Enable multi-user -->
+    <integer name="config_multiuserMaximumUsers">8</integer>
+    
     <bool translatable="false" name="config_wifi_dual_band_support">false</bool>
     
     <bool translatable="false" name="config_wifi_background_scan_support">true</bool>

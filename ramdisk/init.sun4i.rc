@@ -94,12 +94,14 @@ on boot
 	chmod 0777  /sys/class/rfkill/rfkill0/state
 	write /sys/class/rfkill/rfkill0/state 0
 
+	# chown adequately for power HAL after insmod
+	chown system system /sys/devices/platform/mali_dev.0/boostpulse
+	chown system system /sys/module/mali/parameters/mali_boost_rate
+	chown system system /sys/module/mali/parameters/mali_boost_duration
+
 on post-fs-data
 	mkdir /data/misc/wifi/sockets 0770 wifi wifi
 	mkdir /data/misc/sensors 0777 system system
-	#mkdir /data/media 0770 media_rw media_rw
-    chmod 0770 /data/media
-    chown media_rw media_rw /data/media
 	setprop vold.post_fs_data_done 1
 
 # wifi related service
@@ -152,10 +154,6 @@ service iprenew_eth0 /system/bin/dhcpcd -n
 
 service memsicd /system/bin/logwrapper /system/bin/memsicd
 	class main
-
-# virtual sdcard daemon running as media_rw (1023)
-service sdcard /system/bin/sdcard /data/media /mnt/shell/emulated 1023 1023
-	class late_start
 
 on property:dev.bootcomplete=1
 	write /sys/module/lowmemorykiller/parameters/minfree "2048,4096,8192,80000,90000,100000"
