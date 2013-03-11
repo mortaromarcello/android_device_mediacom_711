@@ -38,9 +38,8 @@
     <!-- Diable lockscreen rotation by default -->
     <bool name="config_enableLockScreenRotation">true</bool>
 
-    <!-- Flag indicating whether we should enable the automatic brightness in Settings.
-         config_hardware_automatic_brightness_available is not set, so we will use software implementation -->
-	<bool name="config_automatic_brightness_available">false</bool>
+    <!-- The default iface on which to monitor data use -->
+    <string name="config_datause_iface">wlan0</string>
 
     <!-- Flag indicating whether the current device is "voice capable".
          If true, this means that the device supports circuit-switched
@@ -63,7 +62,7 @@
 
          Note: Disable SMS also disable voicemail waiting sms,
                cell broadcasting sms, and MMS. -->
-    <bool name="config_sms_capable">true</bool>
+    <bool name="config_sms_capable">false</bool>
 
     <!-- True will enable the electron beam screen-off animation. -->
     <!-- bool name="config_screenOffAnimation">true</bool -->
