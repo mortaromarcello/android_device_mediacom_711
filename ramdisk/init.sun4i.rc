@@ -1,28 +1,17 @@
 on init
-
-	# See storage config details at http://source.android.com/tech/storage
-	mkdir /mnt/shell/emulated 0700 shell shell
-	mkdir /storage 0550 system sdcard_r
-	mkdir /storage/emulated 0555 root root
-	mkdir /storage/sdcard1 0000 system system
-	mkdir /storage/usbdisk0 0000 system system
-
-	export EXTERNAL_STORAGE /storage/emulated/legacy
+	export EXTERNAL_STORAGE /storage/sdcard0
 	export SECONDARY_STORAGE /storage/sdcard1
-	export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
-	export EMULATED_STORAGE_TARGET /storage/emulated
-
-	# Support legacy paths
-	symlink /storage/emulated/legacy /sdcard
-	symlink /storage/emulated/legacy /mnt/sdcard
-	symlink /storage/emulated/legacy /storage/sdcard0
-	symlink /mnt/shell/emulated/0 /storage/emulated/legacy
+	mkdir /storage/sdcard0 0000 system system
+	mkdir /storage/sdcard1 0000 system system
+	mkdir /storage/sdcard2 0000 system system
+	symlink /storage/sdcard0 /sdcard
+	symlink /storage/sdcard0 /mnt/sdcard
 	symlink /storage/sdcard1 /mnt/extsd
-	symlink /storage/usbdisk0 /mnt/usbdisk
 
 on fs
-	mount_all /fstab.sun4i
-	setprop ro.crypto.fuse_sdcard true
+	mount ext4 /dev/block/nandd /system wait ro
+	mount ext4 /dev/block/nande /data wait noatime nosuid nodev
+	mount ext4 /dev/block/nandh /cache wait noatime nosuid nodev
 
 on boot	
 	# Enable interactive governor
@@ -73,6 +62,7 @@ on boot
 	#insmod /system/lib/modules/ov5640.ko
 	#insmod /system/lib/modules/sun4i_csi1.ko
 	insmod /system/lib/modules/sun4i_csi0.ko
+	#insmod /system/lib/modules/hi704.ko
 	# usb ethernet drivers
 	insmod /system/lib/modules/usbnet.ko
 	insmod /system/lib/modules/asix.ko
